@@ -25,6 +25,14 @@ for(let i=0;i<24;i++){
 }
 assert.equal(health?.readOnlyExecution,true,'Public Worker not yet responding with expected health; inspect diagnostics above');
 assert.equal(health?.transactionBroadcast,false);
+// Verify that original audit survived this newly deployed Worker version.
+const prior=await request('/api/audit?stream=ci-policy-1793285601479-5p9iuggm');
+assert.equal(prior.recordCount,4,'Earlier durable decision history was lost');
+assert.deepEqual(prior.records.map(x=>x.decision),['ALLOW','DENY','DENY','DENY']);
+assert.deepEqual(prior.records.slice(1).map(x=>x.decidedBy),['SPEND_LIMIT','ALLOWLIST','TIME_WINDOW']);
+assert.ok(prior.records.slice(1).every(x=>x.rpcCallsAttempted===0));
+console.log('ORIGINAL POLICY PROOF SURVIVED REDEPLOY',JSON.stringify({recordCount:prior.recordCount,
+ rules:prior.records.slice(1).map(x=>x.decidedBy),stream:'ci-policy-1793285601479-5p9iuggm'}));
 const cfg=(await request('/api/policy')).policy;
 assert.equal(cfg.rules.maxProposedSpendPhrs,'0.02');
 assert.equal(cfg.rules.allowedMethods.length,3);

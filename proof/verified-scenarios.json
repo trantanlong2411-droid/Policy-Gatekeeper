@@ -1,0 +1,44 @@
+{
+  "schema": "pharos-policy-proof-v1",
+  "testedAtUtc": "2026-10-29",
+  "source": "GitHub Actions deployed-worker live test 40895959166",
+  "sourceLink": "https://github.com/trantanlong2411-droid/Policy-Gatekeeper/actions/runs/40895959166",
+  "worker": "https://policy-gatekeeper.trantanlong2411.workers.dev/",
+  "proofNotebook": "https://policy-gatekeeper.trantanlong2411.workers.dev/?stream=ci-policy-1793285601479-5p9iuggm",
+  "chainId": 688689,
+  "cases": [
+    {
+      "scenario": "standard",
+      "decision": "ALLOW",
+      "rule": "ALL_RULES_PASSED",
+      "executionStatus": "EXECUTED_READ_ONLY",
+      "rpcCallsAttempted": 2,
+      "decodedResult": "1.0"
+    },
+    {
+      "scenario": "denySpend",
+      "decision": "DENY",
+      "rule": "SPEND_LIMIT",
+      "executionStatus": "NOT_EXECUTED",
+      "rpcCallsAttempted": 0
+    },
+    {
+      "scenario": "denyAllowlist",
+      "decision": "DENY",
+      "rule": "ALLOWLIST",
+      "executionStatus": "NOT_EXECUTED",
+      "rpcCallsAttempted": 0
+    },
+    {
+      "scenario": "denyTime",
+      "decision": "DENY",
+      "rule": "TIME_WINDOW",
+      "executionStatus": "NOT_EXECUTED",
+      "rpcCallsAttempted": 0
+    }
+  ],
+  "persistedDecisionCount": 4,
+  "duplicateInputIdempotenceVerified": true,
+  "caveat": "Allowed execution is read-only eth_call; spending value is proposed hypothetical budget, not an actual blockchain transfer. The time-deny mode uses a deliberately restrictive demonstration window.",
+  "transactionBroadcast": false
+}

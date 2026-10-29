@@ -14,6 +14,13 @@ The public audit notebook is not authenticated or private. It is suitable only f
 
 Network: Pharos Atlantic Testnet 688689. Public read-only RPC via `https://atlantic.dplabs-internal.com`. Hosted Pharos MCP is mainnet 1672, so this demo reads Atlantic JSON-RPC directly.
 
+## Verified deployed execution proof
+
+- [Permanent reviewer evidence](./proof/README.md) includes one allowed real Pharos read and a denial for each of three rule types.
+- [Read-only public saved audit](https://policy-gatekeeper.trantanlong2411.workers.dev/?stream=ci-policy-1793285601479-5p9iuggm) includes 4 independently persisted decisions, 3 of which were denied with zero RPC attempts.
+- [GitHub Actions run 40895959166](https://github.com/trantanlong2411-droid/Policy-Gatekeeper/actions/runs/40895959166) passed live HTTP / Pharos testnet checks and 10/10 tests.
+- Follow-up GitHub Actions deployment checks the same original journal to prove the history was not lost when Worker code was updated.
+
 ## Requirement mapping
 
 | Task requirement | Evidence |

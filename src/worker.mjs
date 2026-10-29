@@ -4,6 +4,8 @@ import {HTML} from './page.mjs';
 
 const reply=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{
  'content-type':'application/json;charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff'}});
+// The original verified proof is frozen to prevent third-party edits.
+const READ_ONLY_PROOF_STREAMS=new Set(['ci-policy-1793285601479-5p9iuggm']);
 const validStream=s=>{
  const v=String(s||'');
  if(!/^[a-zA-Z0-9_-]{10,100}$/.test(v))throw Error('Invalid notebook stream ID');
@@ -107,6 +109,8 @@ export default{
    if(u.pathname!=='/api/execute'||request.method!=='POST')return reply({ok:false,error:'Not found'},404);
    const data=await body(request);
    const checked=parseRequest(data);
+   if(READ_ONLY_PROOF_STREAMS.has(checked.stream))
+    return reply({ok:false,error:'This verified proof notebook is read-only; create a new notebook.',transactionBroadcast:false},403);
    const stub=env.AUDIT.get(env.AUDIT.idFromName(checked.stream));
    return stub.fetch('https://audit.internal/execute',{method:'POST',
     headers:{'content-type':'application/json'},body:JSON.stringify(data)});
