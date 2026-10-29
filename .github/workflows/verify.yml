@@ -1,0 +1,39 @@
+name: Policy Gatekeeper — three rules, deny without execution, durable audit
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unit-tests-and-bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - name: Three rule evaluations and fail-closed tests
+        run: npm test
+      - name: Compile Cloudflare Worker
+        run: npm run build-check
+  deployed-policy-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Real Pharos allow, three independent denials, zero RPC on denial, durable audit
+        run: node scripts/smoke-deployed.mjs
+      - name: Upload timestamped real RPC and audit evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pharos-policy-gatekeeper-proof
+          path: proof/live-policy-audit.json
+          retention-days: 30
+          if-no-files-found: error
