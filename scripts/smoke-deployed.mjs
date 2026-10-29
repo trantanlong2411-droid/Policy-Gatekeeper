@@ -12,12 +12,18 @@ const request=async(path,payload)=>{
  return data;
 };
 let health;
-for(let i=0;i<20;i++){
- try{health=await request('/api/health');if(health.service==='policy-gatekeeper'&&health.durable)break}
- catch{}
- await wait(4500);
+console.log('DIAGNOSTIC deployed Worker URL:',base);
+for(let i=0;i<24;i++){
+ try{
+  health=await request('/api/health');
+  console.log('DIAGNOSTIC health attempt',i+1,JSON.stringify(health).slice(0,450));
+  if(health.service==='policy-gatekeeper'&&health.durable)break;
+ }catch(e){
+  console.log('DIAGNOSTIC health error',i+1,String(e.message).slice(0,420));
+ }
+ await wait(5000);
 }
-assert.equal(health?.readOnlyExecution,true);
+assert.equal(health?.readOnlyExecution,true,'Public Worker not yet responding with expected health; inspect diagnostics above');
 assert.equal(health?.transactionBroadcast,false);
 const cfg=(await request('/api/policy')).policy;
 assert.equal(cfg.rules.maxProposedSpendPhrs,'0.02');
